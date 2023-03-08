@@ -7,8 +7,6 @@
 ; a full stack function with both frontend and backend parts,
 ; all defined in the same expression
 
-#?(:clj (defonce !trigger (atom true)))
-(e/def x (e/server (e/watch !trigger)))
 
 (e/defn IncDecApp []
         (e/client
@@ -24,7 +22,7 @@
             (if (>= 10 (e/watch !push)) (dom/h1 (dom/text (e/watch !push))
                                                 (dom/props {:style {:color "white" :background-color "black"}}))
                                         (dom/h1 (dom/text (e/watch !push))
-                                                (dom/props {:style {:color "red" :background-color "white"}})))
+                                                (dom/props {:style {:color "red" :background-color "grey"}})))
 
 
             (ui/button (e/fn [] (swap! !push inc))
@@ -39,8 +37,6 @@
           )
         )
 
-
-;    git remote set-url origin ssh://git@github.com/Bariscanates404/study-Clojure-Electric.git
 
 
 

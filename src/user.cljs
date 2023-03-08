@@ -1,6 +1,7 @@
 (ns ^:dev/always user ; Electric currently needs to rebuild everything when any file changes. Will fix
   (:require
     app.P01-IncDec
+    app.P02-PushInfoToTable
     app.todo-list
     hyperfiddle.electric
     hyperfiddle.electric-dom2))
@@ -8,7 +9,7 @@
 (def electric-main
   (hyperfiddle.electric/boot ; Electric macroexpansion - Clojure to signals compiler
     (binding [hyperfiddle.electric-dom2/node js/document.body]
-      (app.P01-IncDec/IncDecApp.))))
+      (app.P02-PushInfoToTable/TableApp.))))
 
 (defonce reactor nil)
 
