@@ -10,8 +10,8 @@
 (defn men-bmi [w h s] ((s * w) / (h * h)))
 
 (e/defn App []
-        (let [!state (atom {:in "" :in2 "" :in3 "" :w "" :h "" :s "" :button1 "" :button2 "" :button3 "" :bg-color "black" :bg-color2 "black" :bg-color3 "black" :placeholder "..."})]
-          (let [in (get (e/watch !state) :in) in2 (get (e/watch !state) :in2) in3 (get (e/watch !state) :in3) ]
+        (let [!state (atom {:in "" :in2 "" :in3 "" :w "" :h "" :s "" :button1 "" :button2 "" :button3 "" :bg-color "black" :bg-color2 "black" :bg-color3 "black" :placeholder "..."}) !result (atom "")]
+          (let [in (get (e/watch !state) :in) in2 (get (e/watch !state) :in2) in3 (get (e/watch !state) :in3)]
             (e/client
               (dom/h1 (dom/text "BMI Index Calculator"))
 
@@ -44,7 +44,6 @@
                             (dom/on "keyup" (e/fn [keyup]
                                                   (when-some [givenValue (contrib.str/empty->nil (-> keyup .-target .-value))]
                                                     (swap! !state assoc :button2 givenValue)
-                                                    (reset! weight (read-string givenValue))
                                                     )))
                             ))
                 (dom/dt (dom/text "Height (cm)"))
@@ -60,7 +59,6 @@
                             (dom/on "keyup" (e/fn [keyup]
                                                   (when-some [givenValue (contrib.str/empty->nil (-> keyup .-target .-value))]
                                                     (swap! !state assoc :button3 givenValue)
-                                                    (reset! height (read-string givenValue))
                                                     )))
                             ))
                 )
@@ -74,10 +72,13 @@
                           (swap! !state assoc :in "")
                           (swap! !state assoc :in2 "")
                           (swap! !state assoc :in3 "")
+                          (reset! !result (* (-> (e/watch !state) :button1 parse-long)
+                                             (-> (e/watch !state) :button2 parse-long)
+                                             (-> (e/watch !state) :button3 parse-long)))
                           ))
                 (dom/text "Calculate!!!")
                 (dom/props {:class "Button" :style {:color "white" :background-color "black"}}))
-              (dom/h3 (dom/text "Result is: " (read-string (get (e/watch !state) :button1))))
+              (dom/h3 (dom/text "Result is: " (e/watch !result)))
               ))))
 
 
