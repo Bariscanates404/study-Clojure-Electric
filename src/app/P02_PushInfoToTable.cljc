@@ -7,55 +7,56 @@
 
 (e/defn TableApp []
         (e/client
-          (let [!button (atom "")]
-            (let [!userName (atom "")]
-              (let [!email (atom "")]
-                (let [!bg-color (atom "inherit")]
-                  (let [!bg-color2 (atom "inherit")]
-                    (dom/input (dom/props {:id 1 :placeholder "Please write your username..." :style {:background-color (e/watch !bg-color)}})
-                               (dom/on "keydown" (e/fn [enter]
-                                                       (when (= "Enter" (.-key enter))
-                                                         (when-some [givenValue (contrib.str/empty->nil (-> enter .-target .-value))]
-                                                           (reset! !userName givenValue)
-                                                           (set! (.-value dom/node)
-                                                                 (dom/props {:placeholder (str "Given Username= " givenValue)}))))))
-                               (dom/on "keyup" (e/fn [keyup]
-                                                     (when-some [givenValue (contrib.str/empty->nil (-> keyup .-target .-value))]
-                                                       (reset! !button givenValue)
-                                                       )))
-                               )
-                    (ui/button (e/fn [] ((reset! !userName (e/watch !button)) (reset! !bg-color "blue")))
-                               (dom/text "Submit!!!")
-                               (dom/props {:class "Button" :style {:color "white" :background-color "black"}}))
+          (let [!state (atom {:in "" :in2 "" :username "" :email "" :button1 "" :button2 "" :bg-color "black" :bg-color2 "black" :placeholder "Please write your username..."})]
+            (let [in (get (e/watch !state) :in) in2 (get (e/watch !state) :in2)]
+              (ui/input in (e/fn [v] (swap! !state assoc :in v))
+                        (dom/props {:id 1 :placeholder (get (e/watch !state) :placeholder) :style {:background-color (get (e/watch !state) :bg-color)}})
+                        (dom/on "keydown" (e/fn [enter]
+                                                (when (= "Enter" (.-key enter))
+                                                  (when-some [givenValue (contrib.str/empty->nil (-> enter .-target .-value))]
+                                                    (swap! !state assoc :username givenValue)
+                                                    (set! (.-value dom/node)
+                                                          )))))
+                        (dom/on "keyup" (e/fn [keyup]
+                                              (when-some [givenValue (contrib.str/empty->nil (-> keyup .-target .-value))]
+                                                (swap! !state assoc :button1 givenValue)
+                                                )))
+                        )
 
-                    (dom/input (dom/props {:placeholder "Please write your email..." :style {:background-color (e/watch !bg-color2)}})
-                               (dom/on "keydown" (e/fn [enter]
-                                                       (when (= "Enter" (.-key enter))
-                                                         (when-some [givenValue (contrib.str/empty->nil (-> enter .-target .-value))]
-                                                           (reset! !email givenValue)
-                                                           (set! (.-value dom/node)
-                                                                 (dom/props {:placeholder (str "Given email= " givenValue)}))))))
-                               (dom/on "keyup" (e/fn [keyup]
-                                                     (when-some [givenValue (contrib.str/empty->nil (-> keyup .-target .-value))]
-                                                       (reset! !button givenValue)
-                                                       )))
-                               )
-                    (ui/button (e/fn [] ((reset! !email (e/watch !button)) (reset! !bg-color2 "red")))
-                               (dom/text "Submit!!!")
-                               (dom/props {:class "Button" :style {:color "white" :background-color "black"}}))
+              (ui/input in2 (e/fn [v] (swap! !state assoc :in2 v))
+                        (dom/props {:placeholder (get (e/watch !state) :placeholder) :style {:background-color (get (e/watch !state) :bg-color2)}})
+                        (dom/on "keydown" (e/fn [enter]
+                                                (when (= "Enter" (.-key enter))
+                                                  (when-some [givenValue (contrib.str/empty->nil (-> enter .-target .-value))]
+                                                    (swap! !state assoc :email givenValue)
+                                                    (set! (.-value dom/node)
+                                                          )))))
+                        (dom/on "keyup" (e/fn [keyup]
+                                              (when-some [givenValue (contrib.str/empty->nil (-> keyup .-target .-value))]
+                                                (swap! !state assoc :button2 givenValue)
+                                                )))
+                        )
 
-                    (dom/table (dom/props {:class "hyperfiddle"})
-                               (e/client
-                                 (dom/tr
-                                   (dom/th (dom/text (str "Username")))
-                                   (dom/th (dom/text (str "Email")))
-                                   )
-                                 (dom/tr
-                                   (dom/td (dom/text (e/watch !userName)))
-                                   (dom/td (dom/text (e/watch !email)))
-                                   )
-                                 )
-                               )
+              (ui/button
+                (e/fn [] ((swap! !state assoc :username (get (e/watch !state) :button1))
+                          (swap! !state assoc :email (get (e/watch !state) :button2))
+                          (swap! !state assoc :bg-color2 "inherit")
+                          (swap! !state assoc :bg-color "inherit")
+                          (swap! !state assoc :in "")
+                          (swap! !state assoc :in2 "")))
+                (dom/text "Submit!!!")
+                (dom/props {:class "Button" :style {:color "white" :background-color "black"}}))
+
+              (dom/table
+                (dom/props {:class "hyperfiddle"})
+                (e/client
+                  (dom/tr
+                    (dom/th (dom/text (str "Username")))
+                    (dom/th (dom/text (str "Email")))
+                    )
+                  (dom/tr
+                    (dom/td (dom/text (get (e/watch !state) :username)))
+                    (dom/td (dom/text (get (e/watch !state) :email)))
                     )
                   )
                 )
@@ -63,9 +64,7 @@
             )
           )
         )
-
 ;(.-value dom/node) bize input olarak girdiğimiz değer neyse onu dönüyor.
+; --> enter sorununu çöz
+; --> birden fazla değer girilmesi işlemini yap
 
-
-;(let [!search (atom ""), search (e/watch !search)] !search isimli string bir atom tanımlandı ve bu atomun
-;  (ui/input search (e/fn [v] (reset! !search v))
